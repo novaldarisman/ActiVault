@@ -12,8 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
 import { Route as AuthenticatedPelangganRouteImport } from './routes/_authenticated/pelanggan'
+import { Route as AuthenticatedKwitansiRouteImport } from './routes/_authenticated/kwitansi'
+import { Route as AuthenticatedInvoiceRouteImport } from './routes/_authenticated/invoice'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedArsipRouteImport } from './routes/_authenticated/arsip'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -29,9 +33,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedPengaturanRoute = AuthenticatedPengaturanRouteImport.update({
+  id: '/pengaturan',
+  path: '/pengaturan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPelangganRoute = AuthenticatedPelangganRouteImport.update({
   id: '/pelanggan',
   path: '/pelanggan',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedKwitansiRoute = AuthenticatedKwitansiRouteImport.update({
+  id: '/kwitansi',
+  path: '/kwitansi',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInvoiceRoute = AuthenticatedInvoiceRouteImport.update({
+  id: '/invoice',
+  path: '/invoice',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -39,39 +58,76 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedArsipRoute = AuthenticatedArsipRouteImport.update({
+  id: '/arsip',
+  path: '/arsip',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/arsip': typeof AuthenticatedArsipRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invoice': typeof AuthenticatedInvoiceRoute
+  '/kwitansi': typeof AuthenticatedKwitansiRoute
   '/pelanggan': typeof AuthenticatedPelangganRoute
+  '/pengaturan': typeof AuthenticatedPengaturanRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/arsip': typeof AuthenticatedArsipRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invoice': typeof AuthenticatedInvoiceRoute
+  '/kwitansi': typeof AuthenticatedKwitansiRoute
   '/pelanggan': typeof AuthenticatedPelangganRoute
+  '/pengaturan': typeof AuthenticatedPengaturanRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/arsip': typeof AuthenticatedArsipRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/invoice': typeof AuthenticatedInvoiceRoute
+  '/_authenticated/kwitansi': typeof AuthenticatedKwitansiRoute
   '/_authenticated/pelanggan': typeof AuthenticatedPelangganRoute
+  '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/pelanggan'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/arsip'
+    | '/dashboard'
+    | '/invoice'
+    | '/kwitansi'
+    | '/pelanggan'
+    | '/pengaturan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/pelanggan'
+  to:
+    | '/'
+    | '/auth'
+    | '/arsip'
+    | '/dashboard'
+    | '/invoice'
+    | '/kwitansi'
+    | '/pelanggan'
+    | '/pengaturan'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/arsip'
     | '/_authenticated/dashboard'
+    | '/_authenticated/invoice'
+    | '/_authenticated/kwitansi'
     | '/_authenticated/pelanggan'
+    | '/_authenticated/pengaturan'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -103,11 +159,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/pengaturan': {
+      id: '/_authenticated/pengaturan'
+      path: '/pengaturan'
+      fullPath: '/pengaturan'
+      preLoaderRoute: typeof AuthenticatedPengaturanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pelanggan': {
       id: '/_authenticated/pelanggan'
       path: '/pelanggan'
       fullPath: '/pelanggan'
       preLoaderRoute: typeof AuthenticatedPelangganRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/kwitansi': {
+      id: '/_authenticated/kwitansi'
+      path: '/kwitansi'
+      fullPath: '/kwitansi'
+      preLoaderRoute: typeof AuthenticatedKwitansiRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/invoice': {
+      id: '/_authenticated/invoice'
+      path: '/invoice'
+      fullPath: '/invoice'
+      preLoaderRoute: typeof AuthenticatedInvoiceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -117,17 +194,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/arsip': {
+      id: '/_authenticated/arsip'
+      path: '/arsip'
+      fullPath: '/arsip'
+      preLoaderRoute: typeof AuthenticatedArsipRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedArsipRoute: typeof AuthenticatedArsipRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInvoiceRoute: typeof AuthenticatedInvoiceRoute
+  AuthenticatedKwitansiRoute: typeof AuthenticatedKwitansiRoute
   AuthenticatedPelangganRoute: typeof AuthenticatedPelangganRoute
+  AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedArsipRoute: AuthenticatedArsipRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInvoiceRoute: AuthenticatedInvoiceRoute,
+  AuthenticatedKwitansiRoute: AuthenticatedKwitansiRoute,
   AuthenticatedPelangganRoute: AuthenticatedPelangganRoute,
+  AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -141,3 +233,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
