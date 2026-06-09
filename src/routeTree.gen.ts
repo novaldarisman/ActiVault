@@ -10,21 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated/pengaturan'
-import { Route as AuthenticatedPelangganRouteImport } from './routes/_authenticated/pelanggan'
-import { Route as AuthenticatedKwitansiRouteImport } from './routes/_authenticated/kwitansi'
-import { Route as AuthenticatedInvoiceRouteImport } from './routes/_authenticated/invoice'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedArsipRouteImport } from './routes/_authenticated/arsip'
+import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated.pengaturan'
+import { Route as AuthenticatedPelangganRouteImport } from './routes/_authenticated.pelanggan'
+import { Route as AuthenticatedKwitansiRouteImport } from './routes/_authenticated.kwitansi'
+import { Route as AuthenticatedInvoiceRouteImport } from './routes/_authenticated.invoice'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedArsipRouteImport } from './routes/_authenticated.arsip'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -36,32 +36,32 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedPengaturanRoute = AuthenticatedPengaturanRouteImport.update({
   id: '/pengaturan',
   path: '/pengaturan',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPelangganRoute = AuthenticatedPelangganRouteImport.update({
   id: '/pelanggan',
   path: '/pelanggan',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedKwitansiRoute = AuthenticatedKwitansiRouteImport.update({
   id: '/kwitansi',
   path: '/kwitansi',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedInvoiceRoute = AuthenticatedInvoiceRouteImport.update({
   id: '/invoice',
   path: '/invoice',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedArsipRoute = AuthenticatedArsipRouteImport.update({
   id: '/arsip',
   path: '/arsip',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -87,7 +87,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/arsip': typeof AuthenticatedArsipRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -132,7 +132,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
 }
 
@@ -149,7 +149,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -164,47 +164,47 @@ declare module '@tanstack/react-router' {
       path: '/pengaturan'
       fullPath: '/pengaturan'
       preLoaderRoute: typeof AuthenticatedPengaturanRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/pelanggan': {
       id: '/_authenticated/pelanggan'
       path: '/pelanggan'
       fullPath: '/pelanggan'
       preLoaderRoute: typeof AuthenticatedPelangganRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/kwitansi': {
       id: '/_authenticated/kwitansi'
       path: '/kwitansi'
       fullPath: '/kwitansi'
       preLoaderRoute: typeof AuthenticatedKwitansiRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/invoice': {
       id: '/_authenticated/invoice'
       path: '/invoice'
       fullPath: '/invoice'
       preLoaderRoute: typeof AuthenticatedInvoiceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/arsip': {
       id: '/_authenticated/arsip'
       path: '/arsip'
       fullPath: '/arsip'
       preLoaderRoute: typeof AuthenticatedArsipRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
+interface AuthenticatedRouteChildren {
   AuthenticatedArsipRoute: typeof AuthenticatedArsipRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvoiceRoute: typeof AuthenticatedInvoiceRoute
@@ -213,7 +213,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
 }
 
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedArsipRoute: AuthenticatedArsipRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvoiceRoute: AuthenticatedInvoiceRoute,
@@ -222,12 +222,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
 }
 
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
