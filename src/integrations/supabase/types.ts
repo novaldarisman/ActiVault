@@ -62,6 +62,115 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_items: {
+        Row: {
+          created_at: string
+          description: string
+          discount_percent: number
+          id: string
+          invoice_id: string
+          position: number
+          price: number
+          qty: number
+          subtotal: number
+          tax_percent: number
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          discount_percent?: number
+          id?: string
+          invoice_id: string
+          position?: number
+          price?: number
+          qty?: number
+          subtotal?: number
+          tax_percent?: number
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          discount_percent?: number
+          id?: string
+          invoice_id?: string
+          position?: number
+          price?: number
+          qty?: number
+          subtotal?: number
+          tax_percent?: number
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          discount_total: number
+          due_date: string
+          grand_total: number
+          id: string
+          invoice_date: string
+          invoice_number: string
+          notes: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal: number
+          tax_total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          discount_total?: number
+          due_date: string
+          grand_total?: number
+          id?: string
+          invoice_date?: string
+          invoice_number: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          tax_total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          discount_total?: number
+          due_date?: string
+          grand_total?: number
+          id?: string
+          invoice_date?: string
+          invoice_number?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          tax_total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -95,9 +204,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      next_invoice_number: { Args: { _date?: string }; Returns: string }
     }
     Enums: {
       app_role: "super_admin" | "admin_keuangan" | "owner"
+      invoice_status:
+        | "draft"
+        | "terkirim"
+        | "sebagian_dibayar"
+        | "lunas"
+        | "jatuh_tempo"
+        | "dibatalkan"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -226,6 +343,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "admin_keuangan", "owner"],
+      invoice_status: [
+        "draft",
+        "terkirim",
+        "sebagian_dibayar",
+        "lunas",
+        "jatuh_tempo",
+        "dibatalkan",
+      ],
     },
   },
 } as const
