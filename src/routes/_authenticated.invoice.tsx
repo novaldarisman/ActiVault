@@ -27,7 +27,10 @@ import {
 import { toast } from "sonner";
 import type { Tables, Database } from "@/integrations/supabase/types";
 import { terbilang } from "@/lib/terbilang";
-import { generateInvoicePdf } from "@/lib/invoice-pdf";
+import { buildInvoicePdf, triggerDownload, type InvoiceTemplate } from "@/lib/invoice-pdf";
+import { useSettings } from "@/lib/settings";
+import { archivePdf } from "@/lib/archive";
+import { logAudit } from "@/lib/audit";
 
 type Customer = Tables<"customers">;
 type Invoice = Tables<"invoices">;
@@ -70,6 +73,7 @@ function computeItem(it: ItemForm) {
 
 function InvoicePage() {
   const qc = useQueryClient();
+  const { data: settings } = useSettings();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [customerFilter, setCustomerFilter] = useState<string>("all");
@@ -123,8 +127,10 @@ function InvoicePage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      const target = (invoices ?? []).find((i) => i.id === id);
       const { error } = await supabase.from("invoices").delete().eq("id", id);
       if (error) throw error;
+      await logAudit({ entity_type: "invoice", entity_id: id, entity_label: target?.invoice_number, action: "delete" });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["invoices"] });
@@ -136,8 +142,10 @@ function InvoicePage() {
 
   const statusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: Status }) => {
+      const target = (invoices ?? []).find((i) => i.id === id);
       const { error } = await supabase.from("invoices").update({ status }).eq("id", id);
       if (error) throw error;
+      await logAudit({ entity_type: "invoice", entity_id: id, entity_label: target?.invoice_number, action: "status_change", details: { status } });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["invoices"] });
@@ -182,6 +190,7 @@ function InvoicePage() {
       }
       qc.invalidateQueries({ queryKey: ["invoices"] });
       toast.success(`Invoice diduplikasi: ${newInv.invoice_number}`);
+      await logAudit({ entity_type: "invoice", entity_id: newInv.id, entity_label: newInv.invoice_number, action: "duplicate", details: { from: inv.invoice_number } });
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -191,7 +200,7 @@ function InvoicePage() {
     try {
       const { data: items, error } = await supabase.from("invoice_items").select("*").eq("invoice_id", inv.id).order("position");
       if (error) throw error;
-      generateInvoicePdf({
+      const blob = await buildInvoicePdf({
         invoice_number: inv.invoice_number,
         invoice_date: inv.invoice_date,
         due_date: inv.due_date,
@@ -211,7 +220,12 @@ function InvoicePage() {
           tax_percent: Number(it.tax_percent),
           subtotal: Number(it.subtotal),
         })),
-      });
+      }, settings, (settings?.invoice_template as InvoiceTemplate) ?? "modern");
+      triggerDownload(blob, `${inv.invoice_number}.pdf`);
+      try {
+        await archivePdf({ doc_type: "invoice", doc_number: inv.invoice_number, entity_id: inv.id, date: inv.invoice_date, blob });
+      } catch (e) { console.warn("archive failed", e); }
+      await logAudit({ entity_type: "invoice", entity_id: inv.id, entity_label: inv.invoice_number, action: "download_pdf" });
     } catch (e) {
       toast.error((e as Error).message);
     }
