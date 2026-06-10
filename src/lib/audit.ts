@@ -24,7 +24,7 @@ export async function logAudit(params: {
       entity_id: params.entity_id ?? null,
       entity_label: params.entity_label ?? null,
       action: params.action,
-      details: params.details ?? null,
+      details: (params.details ?? null) as never,
     });
   } catch (e) {
     // never block UI on audit failure
