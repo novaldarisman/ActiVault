@@ -437,6 +437,7 @@ function InvoiceFormDialog({
         if (e2) throw e2;
         const { error: e3 } = await supabase.from("invoice_items").insert(itemRows.map((r) => ({ ...r, invoice_id: editing.id })));
         if (e3) throw e3;
+        await logAudit({ entity_type: "invoice", entity_id: editing.id, entity_label: editing.invoice_number, action: "update" });
       } else {
         const { data: numData, error: ne } = await supabase.rpc("next_invoice_number", { _date: invoiceDate });
         if (ne) throw ne;
@@ -450,6 +451,7 @@ function InvoiceFormDialog({
         if (e1) throw e1;
         const { error: e2 } = await supabase.from("invoice_items").insert(itemRows.map((r) => ({ ...r, invoice_id: newInv.id })));
         if (e2) throw e2;
+        await logAudit({ entity_type: "invoice", entity_id: newInv.id, entity_label: newInv.invoice_number, action: "create" });
       }
     },
     onSuccess: () => {
