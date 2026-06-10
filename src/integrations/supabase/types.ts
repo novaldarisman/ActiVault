@@ -14,6 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_name: string | null
+          company_address: string | null
+          company_email: string | null
+          company_logo_url: string | null
+          company_name: string
+          company_npwp: string | null
+          company_phone: string | null
+          created_at: string
+          default_tax_percent: number
+          id: string
+          invoice_footer: string | null
+          invoice_template: string
+          receipt_template: string
+          signature_url: string | null
+          signer_name: string | null
+          stamp_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          company_address?: string | null
+          company_email?: string | null
+          company_logo_url?: string | null
+          company_name?: string
+          company_npwp?: string | null
+          company_phone?: string | null
+          created_at?: string
+          default_tax_percent?: number
+          id?: string
+          invoice_footer?: string | null
+          invoice_template?: string
+          receipt_template?: string
+          signature_url?: string | null
+          signer_name?: string | null
+          stamp_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          company_address?: string | null
+          company_email?: string | null
+          company_logo_url?: string | null
+          company_name?: string
+          company_npwp?: string | null
+          company_phone?: string | null
+          created_at?: string
+          default_tax_percent?: number
+          id?: string
+          invoice_footer?: string | null
+          invoice_template?: string
+          receipt_template?: string
+          signature_url?: string | null
+          signer_name?: string | null
+          stamp_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_label: string | null
+          entity_type: string
+          id: string
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type: string
+          id?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type?: string
+          id?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           alamat: string | null
@@ -59,6 +161,51 @@ export type Database = {
           status_aktif?: boolean
           telepon?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      document_archives: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          doc_number: string
+          doc_type: string
+          entity_id: string | null
+          file_name: string
+          id: string
+          month: number
+          size_bytes: number | null
+          storage_path: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          doc_number: string
+          doc_type: string
+          entity_id?: string | null
+          file_name: string
+          id?: string
+          month: number
+          size_bytes?: number | null
+          storage_path: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          doc_number?: string
+          doc_type?: string
+          entity_id?: string | null
+          file_name?: string
+          id?: string
+          month?: number
+          size_bytes?: number | null
+          storage_path?: string
+          year?: number
         }
         Relationships: []
       }
@@ -171,6 +318,78 @@ export type Database = {
           },
         ]
       }
+      receipts: {
+        Row: {
+          amount: number
+          amount_in_words: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          for_payment: string | null
+          id: string
+          invoice_id: string | null
+          notes: string | null
+          payment_method: string | null
+          receipt_date: string
+          receipt_number: string
+          received_from: string
+          receiver_name: string | null
+          status: Database["public"]["Enums"]["receipt_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          amount_in_words?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          for_payment?: string | null
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          payment_method?: string | null
+          receipt_date?: string
+          receipt_number: string
+          received_from: string
+          receiver_name?: string | null
+          status?: Database["public"]["Enums"]["receipt_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          amount_in_words?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          for_payment?: string | null
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          payment_method?: string | null
+          receipt_date?: string
+          receipt_number?: string
+          received_from?: string
+          receiver_name?: string | null
+          status?: Database["public"]["Enums"]["receipt_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -205,6 +424,7 @@ export type Database = {
         Returns: boolean
       }
       next_invoice_number: { Args: { _date?: string }; Returns: string }
+      next_receipt_number: { Args: { _date?: string }; Returns: string }
     }
     Enums: {
       app_role: "super_admin" | "admin_keuangan" | "owner"
@@ -215,6 +435,7 @@ export type Database = {
         | "lunas"
         | "jatuh_tempo"
         | "dibatalkan"
+      receipt_status: "draft" | "final" | "dibatalkan"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -351,6 +572,7 @@ export const Constants = {
         "jatuh_tempo",
         "dibatalkan",
       ],
+      receipt_status: ["draft", "final", "dibatalkan"],
     },
   },
 } as const
