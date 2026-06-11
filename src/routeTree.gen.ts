@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated.pengguna'
 import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated.pengaturan'
 import { Route as AuthenticatedPelangganRouteImport } from './routes/_authenticated.pelanggan'
 import { Route as AuthenticatedKwitansiRouteImport } from './routes/_authenticated.kwitansi'
@@ -32,6 +33,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPenggunaRoute = AuthenticatedPenggunaRouteImport.update({
+  id: '/pengguna',
+  path: '/pengguna',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPengaturanRoute = AuthenticatedPengaturanRouteImport.update({
   id: '/pengaturan',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/kwitansi': typeof AuthenticatedKwitansiRoute
   '/pelanggan': typeof AuthenticatedPelangganRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
+  '/pengguna': typeof AuthenticatedPenggunaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/kwitansi': typeof AuthenticatedKwitansiRoute
   '/pelanggan': typeof AuthenticatedPelangganRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
+  '/pengguna': typeof AuthenticatedPenggunaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/_authenticated/kwitansi': typeof AuthenticatedKwitansiRoute
   '/_authenticated/pelanggan': typeof AuthenticatedPelangganRoute
   '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
+  '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/kwitansi'
     | '/pelanggan'
     | '/pengaturan'
+    | '/pengguna'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/kwitansi'
     | '/pelanggan'
     | '/pengaturan'
+    | '/pengguna'
   id:
     | '__root__'
     | '/'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/_authenticated/kwitansi'
     | '/_authenticated/pelanggan'
     | '/_authenticated/pengaturan'
+    | '/_authenticated/pengguna'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +170,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/pengguna': {
+      id: '/_authenticated/pengguna'
+      path: '/pengguna'
+      fullPath: '/pengguna'
+      preLoaderRoute: typeof AuthenticatedPenggunaRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/pengaturan': {
       id: '/_authenticated/pengaturan'
@@ -211,6 +230,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedKwitansiRoute: typeof AuthenticatedKwitansiRoute
   AuthenticatedPelangganRoute: typeof AuthenticatedPelangganRoute
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
+  AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -220,6 +240,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedKwitansiRoute: AuthenticatedKwitansiRoute,
   AuthenticatedPelangganRoute: AuthenticatedPelangganRoute,
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
+  AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -234,3 +255,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
