@@ -17,7 +17,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { useSettings } from "@/lib/settings";
 
 export const Route = createFileRoute("/_authenticated/pengaturan")({
-  head: () => ({ meta: [{ title: "Pengaturan — Nova Invoice" }] }),
+  head: () => ({ meta: [{ title: "Pengaturan — DocTiva" }] }),
   component: PengaturanPage,
 });
 

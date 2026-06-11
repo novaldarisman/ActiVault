@@ -56,7 +56,7 @@ export async function buildInvoicePdf(
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
   const accent = TEMPLATES[template].accent;
-  const company = settings?.company_name ?? "Nova Invoice";
+  const company = settings?.company_name ?? "DocTiva";
   const isDraft = inv.status === "draft";
 
   // === Header band ===

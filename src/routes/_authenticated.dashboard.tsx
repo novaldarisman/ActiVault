@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Nova Invoice" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — DocTiva" }] }),
   component: DashboardPage,
 });
 
@@ -67,7 +67,7 @@ function DashboardPage() {
     <div className="max-w-7xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Ringkasan aktivitas Nova Invoice</p>
+        <p className="text-muted-foreground mt-1">Ringkasan aktivitas DocTiva</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

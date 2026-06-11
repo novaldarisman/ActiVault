@@ -26,7 +26,7 @@ type Receipt = Tables<"receipts">;
 type Status = Database["public"]["Enums"]["receipt_status"];
 
 export const Route = createFileRoute("/_authenticated/kwitansi")({
-  head: () => ({ meta: [{ title: "Kwitansi — Nova Invoice" }] }),
+  head: () => ({ meta: [{ title: "Kwitansi — DocTiva" }] }),
   component: KwitansiPage,
 });
 

@@ -37,7 +37,7 @@ export async function buildReceiptPdf(
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
   const accent = T[template].accent;
-  const company = settings?.company_name ?? "Nova Invoice";
+  const company = settings?.company_name ?? "DocTiva";
   const isDraft = r.status === "draft";
 
   if (template === "modern") {

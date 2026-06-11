@@ -16,7 +16,7 @@ import { getArchiveSignedUrl } from "@/lib/archive";
 type Doc = Tables<"document_archives">;
 
 export const Route = createFileRoute("/_authenticated/arsip")({
-  head: () => ({ meta: [{ title: "Arsip — Nova Invoice" }] }),
+  head: () => ({ meta: [{ title: "Arsip — DocTiva" }] }),
   component: ArsipPage,
 });
 

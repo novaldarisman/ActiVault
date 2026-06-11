@@ -38,7 +38,7 @@ type InvoiceItem = Tables<"invoice_items">;
 type Status = Database["public"]["Enums"]["invoice_status"];
 
 export const Route = createFileRoute("/_authenticated/invoice")({
-  head: () => ({ meta: [{ title: "Invoice — Nova Invoice" }] }),
+  head: () => ({ meta: [{ title: "Invoice — DocTiva" }] }),
   component: InvoicePage,
 });
 

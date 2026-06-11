@@ -42,7 +42,7 @@ import type { Tables } from "@/integrations/supabase/types";
 type Customer = Tables<"customers">;
 
 export const Route = createFileRoute("/_authenticated/pelanggan")({
-  head: () => ({ meta: [{ title: "Pelanggan — Nova Invoice" }] }),
+  head: () => ({ meta: [{ title: "Pelanggan — DocTiva" }] }),
   component: PelangganPage,
 });
 
