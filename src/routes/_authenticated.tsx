@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard, Users, FileText, Receipt, Archive,
-  Settings, FileCheck2, LogOut, ShieldCheck, UserCircle,
+  Settings, FileCheck2, LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMyRoles, type Role } from "@/lib/use-role";
@@ -28,9 +28,7 @@ const items: { title: string; url: string; icon: any; allowed: Role[] }[] = [
   { title: "Invoice", url: "/invoice", icon: FileText, allowed: ["super_admin", "owner", "admin_keuangan"] },
   { title: "Kwitansi", url: "/kwitansi", icon: Receipt, allowed: ["super_admin", "owner", "admin_keuangan"] },
   { title: "Arsip", url: "/arsip", icon: Archive, allowed: ["super_admin", "owner"] },
-  { title: "Manajemen Pengguna", url: "/pengguna", icon: ShieldCheck, allowed: ["super_admin"] },
-  { title: "Pengaturan", url: "/pengaturan", icon: Settings, allowed: ["super_admin"] },
-  { title: "Profil Saya", url: "/profil", icon: UserCircle, allowed: ["super_admin", "owner", "admin_keuangan"] },
+  { title: "Pengaturan", url: "/pengaturan", icon: Settings, allowed: ["super_admin", "owner", "admin_keuangan"] },
 ];
 
 function AuthenticatedLayout() {

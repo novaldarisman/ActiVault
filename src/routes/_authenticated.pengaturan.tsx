@@ -15,17 +15,15 @@ import { Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
 import { useSettings } from "@/lib/settings";
+import { useMyRoles } from "@/lib/use-role";
+import { ProfileTab } from "@/components/pengaturan/ProfileTab";
+import { UsersTab } from "@/components/pengaturan/UsersTab";
 
 export const Route = createFileRoute("/_authenticated/pengaturan")({
+  ssr: false,
   head: () => ({ meta: [{ title: "Pengaturan — DocTiva" }] }),
   component: PengaturanPage,
 });
-
-const ROLE_LABELS: Record<string, string> = {
-  super_admin: "Super Admin",
-  admin_keuangan: "Admin Keuangan",
-  owner: "Owner",
-};
 
 type AuditLog = Tables<"audit_logs">;
 type Settings = Tables<"app_settings">;
@@ -35,55 +33,58 @@ const ACTION_LABELS: Record<string, string> = {
   download_pdf: "Unduh PDF", status_change: "Ubah status", duplicate: "Duplikasi",
 };
 
-function PengaturanPage() {
-  const [email, setEmail] = useState("");
-  const [roles, setRoles] = useState<string[]>([]);
+const ROLE_INFO: { value: string; label: string; desc: string }[] = [
+  { value: "super_admin", label: "Super Admin", desc: "Akses penuh: kelola pengguna, pengaturan, dan seluruh modul." },
+  { value: "owner", label: "Owner", desc: "Akses penuh ke modul bisnis (pelanggan, invoice, kwitansi, arsip)." },
+  { value: "admin_keuangan", label: "Admin Keuangan", desc: "Akses ke pelanggan, invoice, dan kwitansi." },
+];
 
-  useEffect(() => {
-    (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      setEmail(u.user?.email ?? "");
-      if (u.user) {
-        const { data } = await supabase.from("user_roles").select("role").eq("user_id", u.user.id);
-        setRoles((data ?? []).map((r) => r.role));
-      }
-    })();
-  }, []);
+function PengaturanPage() {
+  const { data: me } = useMyRoles();
+  const isSuper = (me?.roles ?? []).includes("super_admin");
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Pengaturan</h1>
         <p className="text-muted-foreground mt-1">Profil, perusahaan, template PDF & audit trail</p>
       </div>
 
-      <Tabs defaultValue="company">
-        <TabsList>
-          <TabsTrigger value="company">Perusahaan</TabsTrigger>
+      <Tabs defaultValue="profile">
+        <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="profile">Profil Saya</TabsTrigger>
+          <TabsTrigger value="company">Pengaturan Perusahaan</TabsTrigger>
+          {isSuper && <TabsTrigger value="users">Manajemen Pengguna</TabsTrigger>}
+          <TabsTrigger value="roles">Jabatan</TabsTrigger>
           <TabsTrigger value="pdf">Template PDF</TabsTrigger>
           <TabsTrigger value="audit">Audit Trail</TabsTrigger>
-          <TabsTrigger value="profile">Profil</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="profile"><ProfileTab /></TabsContent>
         <TabsContent value="company"><CompanyTab section="company" /></TabsContent>
+        {isSuper && <TabsContent value="users"><UsersTab /></TabsContent>}
+        <TabsContent value="roles"><RolesTab /></TabsContent>
         <TabsContent value="pdf"><CompanyTab section="pdf" /></TabsContent>
         <TabsContent value="audit"><AuditTab /></TabsContent>
-        <TabsContent value="profile">
-          <Card className="p-6 space-y-4">
-            <h2 className="font-semibold">Profil Akun</h2>
-            <div className="space-y-2"><Label>Email</Label><Input value={email} disabled /></div>
-            <div className="space-y-2">
-              <Label>Role</Label>
-              <div className="flex flex-wrap gap-2">
-                {roles.length === 0
-                  ? <span className="text-sm text-muted-foreground">Tidak ada role</span>
-                  : roles.map((r) => <Badge key={r} variant="secondary">{ROLE_LABELS[r] ?? r}</Badge>)}
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function RolesTab() {
+  return (
+    <Card className="p-6 space-y-4">
+      <h2 className="font-semibold text-lg">Jabatan & Hak Akses</h2>
+      <p className="text-sm text-muted-foreground">Daftar jabatan yang tersedia pada sistem DocTiva.</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {ROLE_INFO.map((r) => (
+          <Card key={r.value} className="p-5 border-2">
+            <Badge variant="secondary" className="mb-2">{r.label}</Badge>
+            <p className="text-sm text-muted-foreground">{r.desc}</p>
+          </Card>
+        ))}
+      </div>
+    </Card>
   );
 }
 

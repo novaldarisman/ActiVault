@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,7 +22,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Plus, Search, Pencil, Trash2, Loader2, FileText, Eye, Copy, Download, Trash,
+  Plus, Search, Pencil, Trash2, Loader2, FileText, Eye, Copy, Download, Trash, Receipt as ReceiptIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables, Database } from "@/integrations/supabase/types";
@@ -31,6 +31,7 @@ import { buildInvoicePdf, triggerDownload, type InvoiceTemplate } from "@/lib/in
 import { useSettings } from "@/lib/settings";
 import { archivePdf } from "@/lib/archive";
 import { logAudit } from "@/lib/audit";
+import { autoCreateReceiptForInvoice } from "@/lib/auto-receipt";
 
 type Customer = Tables<"customers">;
 type Invoice = Tables<"invoices">;
@@ -188,7 +189,18 @@ function InvoicePage() {
         );
         if (e2) throw e2;
       }
+      const cust = customerById.get(newInv.customer_id);
+      try {
+        await autoCreateReceiptForInvoice({
+          invoice_id: newInv.id,
+          invoice_number: newInv.invoice_number,
+          invoice_date: newInv.invoice_date,
+          customer_name: cust?.nama_perusahaan || cust?.nama_pelanggan || "—",
+          amount: Number(newInv.grand_total),
+        });
+      } catch (e) { console.warn("auto-receipt failed", e); }
       qc.invalidateQueries({ queryKey: ["invoices"] });
+      qc.invalidateQueries({ queryKey: ["receipts"] });
       toast.success(`Invoice diduplikasi: ${newInv.invoice_number}`);
       await logAudit({ entity_type: "invoice", entity_id: newInv.id, entity_label: newInv.invoice_number, action: "duplicate", details: { from: inv.invoice_number } });
     } catch (e) {
@@ -452,10 +464,22 @@ function InvoiceFormDialog({
         const { error: e2 } = await supabase.from("invoice_items").insert(itemRows.map((r) => ({ ...r, invoice_id: newInv.id })));
         if (e2) throw e2;
         await logAudit({ entity_type: "invoice", entity_id: newInv.id, entity_label: newInv.invoice_number, action: "create" });
+        // auto-create draft receipt linked to this invoice
+        try {
+          const cust = customers.find((c) => c.id === customerId);
+          await autoCreateReceiptForInvoice({
+            invoice_id: newInv.id,
+            invoice_number: newInv.invoice_number,
+            invoice_date: newInv.invoice_date,
+            customer_name: cust?.nama_perusahaan || cust?.nama_pelanggan || "—",
+            amount: totals.grand,
+          });
+        } catch (e) { console.warn("auto-receipt failed", e); }
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["invoices"] });
+      qc.invalidateQueries({ queryKey: ["receipts"] });
       toast.success(editing ? "Invoice diperbarui" : "Invoice dibuat");
       onClose();
     },
@@ -606,7 +630,9 @@ function InvoicePreviewDialog({
       if (error) throw error;
       const { data: items, error: e2 } = await supabase.from("invoice_items").select("*").eq("invoice_id", id).order("position");
       if (e2) throw e2;
-      return { inv: inv as Invoice, items: items as InvoiceItem[] };
+      const { data: rec } = await supabase.from("receipts")
+        .select("id, receipt_number, status").eq("invoice_id", id).maybeSingle();
+      return { inv: inv as Invoice, items: items as InvoiceItem[], receipt: rec ?? null };
     },
   });
 
@@ -691,6 +717,18 @@ function InvoicePreviewDialog({
               <div className="rounded-xl border bg-muted/20 p-3">
                 <p className="text-xs uppercase text-muted-foreground mb-1">Catatan</p>
                 <p className="text-sm whitespace-pre-wrap">{data.inv.notes}</p>
+              </div>
+            )}
+
+            {data.receipt && (
+              <div className="rounded-xl border bg-emerald-50 p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase text-muted-foreground mb-0.5">Kwitansi Terkait</p>
+                  <Link to="/kwitansi" className="inline-flex items-center gap-1.5 font-semibold text-emerald-700 hover:underline">
+                    <ReceiptIcon className="h-4 w-4" /> {data.receipt.receipt_number}
+                  </Link>
+                </div>
+                <Badge variant="secondary">{data.receipt.status}</Badge>
               </div>
             )}
 

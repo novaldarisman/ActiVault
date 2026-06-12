@@ -116,6 +116,42 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_import_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          failed_rows: number
+          id: string
+          imported_by: string | null
+          imported_by_email: string | null
+          success_rows: number
+          total_rows: number
+          updated_rows: number
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          failed_rows?: number
+          id?: string
+          imported_by?: string | null
+          imported_by_email?: string | null
+          success_rows?: number
+          total_rows?: number
+          updated_rows?: number
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          failed_rows?: number
+          id?: string
+          imported_by?: string | null
+          imported_by_email?: string | null
+          success_rows?: number
+          total_rows?: number
+          updated_rows?: number
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           alamat: string | null
@@ -349,6 +385,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           customer_id: string | null
+          finalized_at: string | null
           for_payment: string | null
           id: string
           invoice_id: string | null
@@ -356,6 +393,7 @@ export type Database = {
           payment_method: string | null
           receipt_date: string
           receipt_number: string
+          receipt_type: string
           received_from: string
           receiver_name: string | null
           status: Database["public"]["Enums"]["receipt_status"]
@@ -367,6 +405,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           customer_id?: string | null
+          finalized_at?: string | null
           for_payment?: string | null
           id?: string
           invoice_id?: string | null
@@ -374,6 +413,7 @@ export type Database = {
           payment_method?: string | null
           receipt_date?: string
           receipt_number: string
+          receipt_type?: string
           received_from: string
           receiver_name?: string | null
           status?: Database["public"]["Enums"]["receipt_status"]
@@ -385,6 +425,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           customer_id?: string | null
+          finalized_at?: string | null
           for_payment?: string | null
           id?: string
           invoice_id?: string | null
@@ -392,6 +433,7 @@ export type Database = {
           payment_method?: string | null
           receipt_date?: string
           receipt_number?: string
+          receipt_type?: string
           received_from?: string
           receiver_name?: string | null
           status?: Database["public"]["Enums"]["receipt_status"]
