@@ -82,7 +82,7 @@ function DashboardPage() {
     queryKey: ["dashboard"],
     queryFn: async () => {
       const [inv, rec, cust] = await Promise.all([
-        supabase.from("invoices").select("id, invoice_date, grand_total, status, invoice_number, customer:customers(nama_pelanggan,nama_perusahaan)").order("invoice_date", { ascending: false }),
+        supabase.from("invoices").select("id, invoice_date, due_date, grand_total, status, invoice_number, customer:customers(nama_pelanggan,nama_perusahaan)").order("invoice_date", { ascending: false }),
         supabase.from("receipts").select("id, receipt_date, amount, status, receipt_number").order("receipt_date", { ascending: false }),
         supabase.from("customers").select("id, nama_pelanggan, status_aktif").order("created_at", { ascending: false }),
       ]);
