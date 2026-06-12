@@ -464,10 +464,22 @@ function InvoiceFormDialog({
         const { error: e2 } = await supabase.from("invoice_items").insert(itemRows.map((r) => ({ ...r, invoice_id: newInv.id })));
         if (e2) throw e2;
         await logAudit({ entity_type: "invoice", entity_id: newInv.id, entity_label: newInv.invoice_number, action: "create" });
+        // auto-create draft receipt linked to this invoice
+        try {
+          const cust = customers.find((c) => c.id === customerId);
+          await autoCreateReceiptForInvoice({
+            invoice_id: newInv.id,
+            invoice_number: newInv.invoice_number,
+            invoice_date: newInv.invoice_date,
+            customer_name: cust?.nama_perusahaan || cust?.nama_pelanggan || "—",
+            amount: totals.grand,
+          });
+        } catch (e) { console.warn("auto-receipt failed", e); }
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["invoices"] });
+      qc.invalidateQueries({ queryKey: ["receipts"] });
       toast.success(editing ? "Invoice diperbarui" : "Invoice dibuat");
       onClose();
     },
