@@ -277,6 +277,8 @@ function KwitansiPage() {
 
 function ReceiptFormDialog({ open, onClose, editing }: { open: boolean; onClose: () => void; editing: Receipt | null }) {
   const qc = useQueryClient();
+  const [receiptType, setReceiptType] = useState<"manual" | "otomatis">(((editing?.receipt_type as "manual" | "otomatis") ?? "manual"));
+  const [invoiceId, setInvoiceId] = useState<string | null>(editing?.invoice_id ?? null);
   const [receiptDate, setReceiptDate] = useState(editing?.receipt_date ?? todayISO());
   const [receivedFrom, setReceivedFrom] = useState(editing?.received_from ?? "");
   const [amount, setAmount] = useState<number>(Number(editing?.amount ?? 0));
@@ -289,16 +291,43 @@ function ReceiptFormDialog({ open, onClose, editing }: { open: boolean; onClose:
 
   const autoWords = useMemo(() => terbilang(amount || 0), [amount]);
 
+  const { data: invoiceOptions } = useQuery({
+    queryKey: ["invoices-for-receipt"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("invoices")
+        .select("id, invoice_number, invoice_date, grand_total, customer:customers(nama_pelanggan, nama_perusahaan)")
+        .order("invoice_date", { ascending: false }).limit(200);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: receiptType === "otomatis",
+  });
+
+  const onPickInvoice = (id: string) => {
+    setInvoiceId(id);
+    const inv: any = (invoiceOptions ?? []).find((i: any) => i.id === id);
+    if (!inv) return;
+    const name = inv.customer?.nama_perusahaan || inv.customer?.nama_pelanggan || "—";
+    setReceivedFrom(name);
+    setAmount(Number(inv.grand_total));
+    setAmountWords(terbilang(Number(inv.grand_total)));
+    setForPayment(`Pembayaran invoice ${inv.invoice_number}`);
+    setReceiptDate(inv.invoice_date);
+  };
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!receivedFrom.trim()) throw new Error("Isi 'Sudah diterima dari'");
       if (!amount || amount <= 0) throw new Error("Nominal harus lebih dari 0");
+      if (receiptType === "otomatis" && !invoiceId) throw new Error("Pilih invoice terlebih dahulu");
       const { data: user } = await supabase.auth.getUser();
       const payload = {
         receipt_date: receiptDate, received_from: receivedFrom, amount,
         amount_in_words: amountWords || autoWords,
         for_payment: forPayment || null, payment_method: paymentMethod || null,
         receiver_name: receiverName || null, status, notes: notes || null,
+        invoice_id: receiptType === "otomatis" ? invoiceId : null,
+        receipt_type: receiptType,
       };
       if (editing) {
         const { error } = await supabase.from("receipts").update(payload).eq("id", editing.id);
@@ -326,6 +355,33 @@ function ReceiptFormDialog({ open, onClose, editing }: { open: boolean; onClose:
           <DialogDescription>{editing ? "Perbarui informasi kwitansi" : "Nomor kwitansi akan dibuat otomatis (KW-YYYYMM-XXXX)"}</DialogDescription>
         </DialogHeader>
         <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(); }} className="space-y-4 py-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Jenis Kwitansi *</Label>
+              <Select value={receiptType} onValueChange={(v) => { setReceiptType(v as any); if (v === "manual") setInvoiceId(null); }} disabled={!!editing}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="manual">Manual</SelectItem>
+                  <SelectItem value="otomatis">Otomatis dari Invoice</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {receiptType === "otomatis" && (
+              <div className="space-y-2">
+                <Label>Invoice Terkait *</Label>
+                <Select value={invoiceId ?? ""} onValueChange={onPickInvoice} disabled={!!editing}>
+                  <SelectTrigger><SelectValue placeholder="Pilih invoice" /></SelectTrigger>
+                  <SelectContent>
+                    {(invoiceOptions ?? []).map((i: any) => (
+                      <SelectItem key={i.id} value={i.id}>
+                        {i.invoice_number} — {i.customer?.nama_perusahaan || i.customer?.nama_pelanggan}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Tanggal *</Label>
