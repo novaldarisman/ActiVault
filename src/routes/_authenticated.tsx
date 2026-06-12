@@ -6,7 +6,7 @@ import {
   SidebarProvider, SidebarTrigger, SidebarHeader, SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
-  LayoutDashboard, Users, FileText, Receipt, Archive,
+  LayoutDashboard, Users, FileText, Receipt, Archive, ScrollText,
   Settings, FileCheck2, LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ const items: { title: string; url: string; icon: any; allowed: Role[] }[] = [
   { title: "Pelanggan", url: "/pelanggan", icon: Users, allowed: ["super_admin", "owner", "admin_keuangan"] },
   { title: "Invoice", url: "/invoice", icon: FileText, allowed: ["super_admin", "owner", "admin_keuangan"] },
   { title: "Kwitansi", url: "/kwitansi", icon: Receipt, allowed: ["super_admin", "owner", "admin_keuangan"] },
+  { title: "Surat Menyurat", url: "/surat", icon: ScrollText, allowed: ["super_admin", "owner", "admin_keuangan"] },
   { title: "Arsip", url: "/arsip", icon: Archive, allowed: ["super_admin", "owner"] },
   { title: "Pengaturan", url: "/pengaturan", icon: Settings, allowed: ["super_admin", "owner", "admin_keuangan"] },
 ];

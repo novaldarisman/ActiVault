@@ -152,6 +152,262 @@ export type Database = {
         }
         Relationships: []
       }
+      document_signatories: {
+        Row: {
+          created_at: string
+          document_id: string
+          id: string
+          name: string | null
+          party_label: string
+          position: string | null
+          signature_url: string | null
+          sort_order: number
+          stamp_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          id?: string
+          name?: string | null
+          party_label?: string
+          position?: string | null
+          signature_url?: string | null
+          sort_order?: number
+          stamp_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          id?: string
+          name?: string | null
+          party_label?: string
+          position?: string | null
+          signature_url?: string | null
+          sort_order?: number
+          stamp_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_signatories_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_status_histories: {
+        Row: {
+          changed_by: string | null
+          changed_by_email: string | null
+          created_at: string
+          document_id: string
+          id: string
+          new_status: Database["public"]["Enums"]["document_status"]
+          notes: string | null
+          old_status: Database["public"]["Enums"]["document_status"] | null
+        }
+        Insert: {
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          document_id: string
+          id?: string
+          new_status: Database["public"]["Enums"]["document_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["document_status"] | null
+        }
+        Update: {
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          document_id?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["document_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["document_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_status_histories_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_templates: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          description: string | null
+          document_type_id: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          description?: string | null
+          document_type_id: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          description?: string | null
+          document_type_id?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_templates_document_type_id_fkey"
+            columns: ["document_type_id"]
+            isOneToOne: false
+            referencedRelation: "document_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_types: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          number_format: string
+          number_prefix: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          number_format?: string
+          number_prefix: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          number_format?: string
+          number_prefix?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          customer_id: string | null
+          document_date: string
+          document_number: string
+          document_type_id: string
+          effective_date: string | null
+          expiry_date: string | null
+          finalized_at: string | null
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["document_status"]
+          template_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          customer_id?: string | null
+          document_date?: string
+          document_number: string
+          document_type_id: string
+          effective_date?: string | null
+          expiry_date?: string | null
+          finalized_at?: string | null
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          template_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          customer_id?: string | null
+          document_date?: string
+          document_number?: string
+          document_type_id?: string
+          effective_date?: string | null
+          expiry_date?: string | null
+          finalized_at?: string | null
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_document_type_id_fkey"
+            columns: ["document_type_id"]
+            isOneToOne: false
+            referencedRelation: "document_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           alamat: string | null
@@ -491,6 +747,7 @@ export type Database = {
       }
       next_invoice_number: { Args: { _date?: string }; Returns: string }
       next_receipt_number: { Args: { _date?: string }; Returns: string }
+      next_document_number: { Args: { _date?: string; _document_type_id: string }; Returns: string }
     }
     Enums: {
       app_role: "super_admin" | "admin_keuangan" | "owner"
@@ -501,6 +758,7 @@ export type Database = {
         | "lunas"
         | "jatuh_tempo"
         | "dibatalkan"
+      document_status: "draft" | "aktif" | "selesai" | "berakhir" | "dibatalkan"
       receipt_status: "draft" | "final" | "dibatalkan"
     }
     CompositeTypes: {
@@ -638,6 +896,7 @@ export const Constants = {
         "jatuh_tempo",
         "dibatalkan",
       ],
+      document_status: ["draft", "aktif", "selesai", "berakhir", "dibatalkan"],
       receipt_status: ["draft", "final", "dibatalkan"],
     },
   },

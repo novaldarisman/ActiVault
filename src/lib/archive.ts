@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export async function archivePdf(params: {
-  doc_type: "invoice" | "receipt";
+  doc_type: string;
   doc_number: string;
   entity_id?: string | null;
   date: string; // ISO date
@@ -10,7 +10,7 @@ export async function archivePdf(params: {
   const d = new Date(params.date);
   const year = d.getFullYear();
   const month = d.getMonth() + 1;
-  const folder = params.doc_type === "invoice" ? "invoices" : "receipts";
+  const folder = params.doc_type;
   const fileName = `${params.doc_number}.pdf`;
   const storagePath = `${folder}/${year}/${String(month).padStart(2, "0")}/${fileName}`;
 
