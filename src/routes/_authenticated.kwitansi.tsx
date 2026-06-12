@@ -442,9 +442,12 @@ function ReceiptPreviewDialog({ id, onClose, onDownload }: { id: string; onClose
   const { data, isLoading } = useQuery({
     queryKey: ["receipt", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("receipts").select("*").eq("id", id).single();
+      const { data, error } = await supabase
+        .from("receipts")
+        .select("*, invoice:invoices(id, invoice_number)")
+        .eq("id", id).single();
       if (error) throw error;
-      return data as Receipt;
+      return data as Receipt & { invoice?: { id: string; invoice_number: string } | null };
     },
   });
   return (
@@ -460,6 +463,14 @@ function ReceiptPreviewDialog({ id, onClose, onDownload }: { id: string; onClose
             </DialogHeader>
             <div className="space-y-3 py-2 text-sm">
               <Field label="Sudah diterima dari" value={data.received_from} />
+              {data.invoice && (
+                <div>
+                  <p className="text-xs uppercase text-muted-foreground">Invoice Terkait</p>
+                  <Link to="/invoice" className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">
+                    <FileText className="h-4 w-4" /> {data.invoice.invoice_number}
+                  </Link>
+                </div>
+              )}
               <Field label="Uang sejumlah" value={data.amount_in_words || terbilang(Number(data.amount))} />
               <Field label="Untuk pembayaran" value={data.for_payment ?? "-"} />
               <Field label="Metode pembayaran" value={data.payment_method ?? "-"} />
