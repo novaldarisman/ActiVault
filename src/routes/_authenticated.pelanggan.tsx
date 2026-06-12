@@ -35,9 +35,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Search, Pencil, Trash2, Loader2, Users } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Loader2, Users, Upload } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
+import { PelangganImportDialog } from "@/components/pelanggan/ImportDialog";
 
 type Customer = Tables<"customers">;
 
@@ -77,6 +78,7 @@ function PelangganPage() {
   const [editing, setEditing] = useState<Customer | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   const { data: customers, isLoading } = useQuery({
     queryKey: ["customers"],
@@ -177,6 +179,9 @@ function PelangganPage() {
         </div>
         <Button onClick={openCreate}>
           <Plus className="h-4 w-4 mr-2" /> Tambah Pelanggan
+        </Button>
+        <Button variant="outline" onClick={() => setImportOpen(true)}>
+          <Upload className="h-4 w-4 mr-2" /> Impor
         </Button>
       </div>
 
