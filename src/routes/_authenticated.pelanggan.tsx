@@ -384,6 +384,15 @@ function PelangganPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {importOpen && (
+        <PelangganImportDialog
+          open={importOpen}
+          onClose={() => setImportOpen(false)}
+          onImported={() => qc.invalidateQueries({ queryKey: ["customers"] })}
+          existing={(customers ?? []).map((c) => ({ nama_pelanggan: c.nama_pelanggan, email: c.email }))}
+        />
+      )}
     </div>
   );
 }
