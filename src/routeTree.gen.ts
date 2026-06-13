@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSuratRouteImport } from './routes/_authenticated.surat'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated.profil'
+import { Route as AuthenticatedPlatformRouteImport } from './routes/_authenticated.platform'
 import { Route as AuthenticatedPenggunaRouteImport } from './routes/_authenticated.pengguna'
 import { Route as AuthenticatedPengaturanRouteImport } from './routes/_authenticated.pengaturan'
 import { Route as AuthenticatedPelangganRouteImport } from './routes/_authenticated.pelanggan'
@@ -21,6 +22,9 @@ import { Route as AuthenticatedKwitansiRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedInvoiceRouteImport } from './routes/_authenticated.invoice'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedArsipRouteImport } from './routes/_authenticated.arsip'
+import { Route as AuthenticatedPlatformIndexRouteImport } from './routes/_authenticated.platform.index'
+import { Route as AuthenticatedPlatformTenantsRouteImport } from './routes/_authenticated.platform.tenants'
+import { Route as AuthenticatedPlatformAuditRouteImport } from './routes/_authenticated.platform.audit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -44,6 +48,11 @@ const AuthenticatedSuratRoute = AuthenticatedSuratRouteImport.update({
 const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedPlatformRoute = AuthenticatedPlatformRouteImport.update({
+  id: '/platform',
+  path: '/platform',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPenggunaRoute = AuthenticatedPenggunaRouteImport.update({
@@ -81,6 +90,24 @@ const AuthenticatedArsipRoute = AuthenticatedArsipRouteImport.update({
   path: '/arsip',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedPlatformIndexRoute =
+  AuthenticatedPlatformIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPlatformRoute,
+  } as any)
+const AuthenticatedPlatformTenantsRoute =
+  AuthenticatedPlatformTenantsRouteImport.update({
+    id: '/tenants',
+    path: '/tenants',
+    getParentRoute: () => AuthenticatedPlatformRoute,
+  } as any)
+const AuthenticatedPlatformAuditRoute =
+  AuthenticatedPlatformAuditRouteImport.update({
+    id: '/audit',
+    path: '/audit',
+    getParentRoute: () => AuthenticatedPlatformRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -92,8 +119,12 @@ export interface FileRoutesByFullPath {
   '/pelanggan': typeof AuthenticatedPelangganRoute
   '/pengaturan': typeof AuthenticatedPengaturanRoute
   '/pengguna': typeof AuthenticatedPenggunaRoute
+  '/platform': typeof AuthenticatedPlatformRouteWithChildren
   '/profil': typeof AuthenticatedProfilRoute
   '/surat': typeof AuthenticatedSuratRoute
+  '/platform/audit': typeof AuthenticatedPlatformAuditRoute
+  '/platform/tenants': typeof AuthenticatedPlatformTenantsRoute
+  '/platform/': typeof AuthenticatedPlatformIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,6 +138,9 @@ export interface FileRoutesByTo {
   '/pengguna': typeof AuthenticatedPenggunaRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/surat': typeof AuthenticatedSuratRoute
+  '/platform/audit': typeof AuthenticatedPlatformAuditRoute
+  '/platform/tenants': typeof AuthenticatedPlatformTenantsRoute
+  '/platform': typeof AuthenticatedPlatformIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -120,8 +154,12 @@ export interface FileRoutesById {
   '/_authenticated/pelanggan': typeof AuthenticatedPelangganRoute
   '/_authenticated/pengaturan': typeof AuthenticatedPengaturanRoute
   '/_authenticated/pengguna': typeof AuthenticatedPenggunaRoute
+  '/_authenticated/platform': typeof AuthenticatedPlatformRouteWithChildren
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/surat': typeof AuthenticatedSuratRoute
+  '/_authenticated/platform/audit': typeof AuthenticatedPlatformAuditRoute
+  '/_authenticated/platform/tenants': typeof AuthenticatedPlatformTenantsRoute
+  '/_authenticated/platform/': typeof AuthenticatedPlatformIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -135,8 +173,12 @@ export interface FileRouteTypes {
     | '/pelanggan'
     | '/pengaturan'
     | '/pengguna'
+    | '/platform'
     | '/profil'
     | '/surat'
+    | '/platform/audit'
+    | '/platform/tenants'
+    | '/platform/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,6 +192,9 @@ export interface FileRouteTypes {
     | '/pengguna'
     | '/profil'
     | '/surat'
+    | '/platform/audit'
+    | '/platform/tenants'
+    | '/platform'
   id:
     | '__root__'
     | '/'
@@ -162,8 +207,12 @@ export interface FileRouteTypes {
     | '/_authenticated/pelanggan'
     | '/_authenticated/pengaturan'
     | '/_authenticated/pengguna'
+    | '/_authenticated/platform'
     | '/_authenticated/profil'
     | '/_authenticated/surat'
+    | '/_authenticated/platform/audit'
+    | '/_authenticated/platform/tenants'
+    | '/_authenticated/platform/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -207,6 +256,13 @@ declare module '@tanstack/react-router' {
       path: '/profil'
       fullPath: '/profil'
       preLoaderRoute: typeof AuthenticatedProfilRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/platform': {
+      id: '/_authenticated/platform'
+      path: '/platform'
+      fullPath: '/platform'
+      preLoaderRoute: typeof AuthenticatedPlatformRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/pengguna': {
@@ -258,8 +314,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedArsipRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/platform/': {
+      id: '/_authenticated/platform/'
+      path: '/'
+      fullPath: '/platform/'
+      preLoaderRoute: typeof AuthenticatedPlatformIndexRouteImport
+      parentRoute: typeof AuthenticatedPlatformRoute
+    }
+    '/_authenticated/platform/tenants': {
+      id: '/_authenticated/platform/tenants'
+      path: '/tenants'
+      fullPath: '/platform/tenants'
+      preLoaderRoute: typeof AuthenticatedPlatformTenantsRouteImport
+      parentRoute: typeof AuthenticatedPlatformRoute
+    }
+    '/_authenticated/platform/audit': {
+      id: '/_authenticated/platform/audit'
+      path: '/audit'
+      fullPath: '/platform/audit'
+      preLoaderRoute: typeof AuthenticatedPlatformAuditRouteImport
+      parentRoute: typeof AuthenticatedPlatformRoute
+    }
   }
 }
+
+interface AuthenticatedPlatformRouteChildren {
+  AuthenticatedPlatformAuditRoute: typeof AuthenticatedPlatformAuditRoute
+  AuthenticatedPlatformTenantsRoute: typeof AuthenticatedPlatformTenantsRoute
+  AuthenticatedPlatformIndexRoute: typeof AuthenticatedPlatformIndexRoute
+}
+
+const AuthenticatedPlatformRouteChildren: AuthenticatedPlatformRouteChildren = {
+  AuthenticatedPlatformAuditRoute: AuthenticatedPlatformAuditRoute,
+  AuthenticatedPlatformTenantsRoute: AuthenticatedPlatformTenantsRoute,
+  AuthenticatedPlatformIndexRoute: AuthenticatedPlatformIndexRoute,
+}
+
+const AuthenticatedPlatformRouteWithChildren =
+  AuthenticatedPlatformRoute._addFileChildren(
+    AuthenticatedPlatformRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedArsipRoute: typeof AuthenticatedArsipRoute
@@ -269,6 +363,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPelangganRoute: typeof AuthenticatedPelangganRoute
   AuthenticatedPengaturanRoute: typeof AuthenticatedPengaturanRoute
   AuthenticatedPenggunaRoute: typeof AuthenticatedPenggunaRoute
+  AuthenticatedPlatformRoute: typeof AuthenticatedPlatformRouteWithChildren
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedSuratRoute: typeof AuthenticatedSuratRoute
 }
@@ -281,6 +376,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPelangganRoute: AuthenticatedPelangganRoute,
   AuthenticatedPengaturanRoute: AuthenticatedPengaturanRoute,
   AuthenticatedPenggunaRoute: AuthenticatedPenggunaRoute,
+  AuthenticatedPlatformRoute: AuthenticatedPlatformRouteWithChildren,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedSuratRoute: AuthenticatedSuratRoute,
 }

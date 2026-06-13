@@ -1,0 +1,4 @@
+Nama Tenant,Jenis,Perusahaan,Email Tenant,Telepon,Alamat,Admin Nama,Admin Email,Admin Password
+PT Activa,Perusahaan,PT Activa Indonesia,activa@example.com,021-123456,"Jl. Sudirman No.1, Jakarta",Budi Santoso,budi@activa.id,pass123
+SMK Ekonomika,Sekolah,SMK Ekonomika Jakarta,,,"Jl. Pendidikan No.5, Bandung",Ani Wijaya,ani@sekolah.id,pass123
+Batch Pelatihan 1,Pelatihan,,,,,Instruktur A,instruktur@training.id,pass123

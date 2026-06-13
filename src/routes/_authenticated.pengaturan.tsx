@@ -34,6 +34,7 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 const ROLE_INFO: { value: string; label: string; desc: string }[] = [
+  { value: "tenant_super_admin", label: "Tenant Super Admin", desc: "Admin tertinggi tenant: kelola pengguna, pengaturan, dan seluruh modul." },
   { value: "super_admin", label: "Super Admin", desc: "Akses penuh: kelola pengguna, pengaturan, dan seluruh modul." },
   { value: "owner", label: "Owner", desc: "Akses penuh ke modul bisnis (pelanggan, invoice, kwitansi, arsip)." },
   { value: "admin_keuangan", label: "Admin Keuangan", desc: "Akses ke pelanggan, invoice, dan kwitansi." },
@@ -41,7 +42,7 @@ const ROLE_INFO: { value: string; label: string; desc: string }[] = [
 
 function PengaturanPage() {
   const { data: me } = useMyRoles();
-  const isSuper = (me?.roles ?? []).includes("super_admin");
+  const isSuper = (me?.roles ?? []).some((r: string) => ["super_admin", "tenant_super_admin", "owner", "admin_keuangan"].includes(r));
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">

@@ -282,8 +282,10 @@ function SuratPage() {
         if (!docTypeSelected) throw new Error("Jenis dokumen tidak ditemukan");
         const { data: numData, error: ne } = await supabase.rpc("next_document_number", { _document_type_id: docTypeId, _date: documentDate });
         if (ne) throw ne;
-        const { data: newDoc, error } = await supabase.from("documents").insert({
-          document_number: numData as string,
+        const { data: tidData } = await supabase.rpc("get_my_tenant_id");
+        const { data: newDoc, error } = await (supabase.from("documents") as any).insert({ 
+          tenant_id: tidData,
+                    document_number: numData as string,
           document_type_id: docTypeId, template_id: templateId === "_none" ? null : templateId || null,
           customer_id: customerId || null, title, document_date: documentDate,
           effective_date: effectiveDate || null, expiry_date: expiryDate || null,

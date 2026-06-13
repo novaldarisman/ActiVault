@@ -489,6 +489,134 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           created_by_email?: string | null
+      platform_audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_label: string | null
+          entity_type: string
+          id: string
+          tenant_id: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type: string
+          id?: string
+          tenant_id?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type?: string
+          id?: string
+          tenant_id?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      tenant_subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          plan: string
+          started_at: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          plan?: string
+          started_at?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          plan?: string
+          started_at?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_subscriptions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          activated_at: string | null
+          address: string | null
+          company_name: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          npwp: string | null
+          phone: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          address?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          npwp?: string | null
+          phone?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          address?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          npwp?: string | null
+          phone?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
           doc_number?: string
           doc_type?: string
           entity_id?: string | null
@@ -748,9 +876,12 @@ export type Database = {
       next_invoice_number: { Args: { _date?: string }; Returns: string }
       next_receipt_number: { Args: { _date?: string }; Returns: string }
       next_document_number: { Args: { _date?: string; _document_type_id: string }; Returns: string }
+      get_my_tenant_id: { Args: Record<PropertyKey, never>; Returns: string }
+      is_platform_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
+      create_tenant_with_admin: { Args: { p_admin_email?: string; p_admin_full_name?: string; p_admin_password?: string; p_address?: string; p_company_name?: string; p_email?: string; p_phone?: string; p_tenant_name: string; p_tenant_type?: string }; Returns: Json }
     }
     Enums: {
-      app_role: "super_admin" | "admin_keuangan" | "owner"
+      app_role: "super_admin" | "admin_keuangan" | "owner" | "platform_super_admin" | "tenant_super_admin"
       invoice_status:
         | "draft"
         | "terkirim"
@@ -887,7 +1018,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["super_admin", "admin_keuangan", "owner"],
+      app_role: ["super_admin", "admin_keuangan", "owner", "platform_super_admin", "tenant_super_admin"],
       invoice_status: [
         "draft",
         "terkirim",

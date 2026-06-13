@@ -23,6 +23,7 @@ import {
 } from "@/lib/users.functions";
 
 const ROLE_LABELS: Record<string, string> = {
+  tenant_super_admin: "Tenant Super Admin",
   super_admin: "Super Admin", admin_keuangan: "Admin Keuangan", owner: "Owner",
 };
 
@@ -216,6 +217,7 @@ function UserFormDialog({
           <Select value={role} onValueChange={setRole}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
+              <SelectItem value="tenant_super_admin">Tenant Super Admin</SelectItem>
               <SelectItem value="super_admin">Super Admin</SelectItem>
               <SelectItem value="admin_keuangan">Admin Keuangan</SelectItem>
               <SelectItem value="owner">Owner</SelectItem>

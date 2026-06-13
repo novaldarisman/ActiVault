@@ -127,7 +127,8 @@ export function PelangganImportDialog({
 
       let successRows = 0, updatedRows = 0;
       if (toInsert.length) {
-        const { error, count } = await supabase.from("customers").insert(toInsert, { count: "exact" });
+        const { data: tidData } = await supabase.rpc("get_my_tenant_id");
+      const { error, count } = await supabase.from("customers").insert(toInsert.map((r: any) => ({ ...r, tenant_id: tidData })), { count: "exact" });
         if (error) throw error;
         successRows = count ?? toInsert.length;
       }
